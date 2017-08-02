@@ -1,0 +1,6 @@
+*.pem
+*.json
+!vendor/vendor.json
+*.DS_Store
+*.log
+*.yml
