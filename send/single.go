@@ -26,6 +26,7 @@ func (s *Single) Deliver(email string, template string, vars map[string]string) 
 			BehalfOf: s.Params.BehalfOf,
 		},
 		DataFeedURL: s.Params.DataFeedURL,
+		Vars:        vars,
 	}
 
 	if s.Params.Test {

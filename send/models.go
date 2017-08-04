@@ -7,11 +7,12 @@ const (
 // Ensure that the params hash is ordered alphabetically so that
 // the signature creation process "just works"
 type params struct {
-	Template     string      `json:"template"`
-	Email        string      `json:"email"`
-	ScheduleTime interface{} `json:"schedule_time,omitempty"`
-	Options      Options     `json:"options,omitempty"`
-	DataFeedURL  string      `json:"data_feed_url,omitempty"`
+	Template     string            `json:"template"`
+	Email        string            `json:"email"`
+	ScheduleTime interface{}       `json:"schedule_time,omitempty"`
+	Options      Options           `json:"options,omitempty"`
+	DataFeedURL  string            `json:"data_feed_url,omitempty"`
+	Vars         map[string]string `json:"vars,omitempty"`
 }
 
 type ScheduleWindow struct {
