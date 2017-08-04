@@ -17,8 +17,9 @@ const (
 )
 
 type Client struct {
-	key    string
-	secret string
+	key        string
+	secret     string
+	HTTPClient *http.Client
 }
 
 func NewClient(key, secret string) *Client {
@@ -26,8 +27,6 @@ func NewClient(key, secret string) *Client {
 }
 
 func (c *Client) Post(endpoint string, obj interface{}) error {
-	client := &http.Client{}
-
 	values, err := c.formValues(obj)
 	if err != nil {
 		return err
@@ -37,10 +36,7 @@ func (c *Client) Post(endpoint string, obj interface{}) error {
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.Header.Add("Content-Length", strconv.Itoa(len(values.Encode())))
 
-	resp, err := client.Do(r)
-	fmt.Println(resp)
-
-	return err
+	return c.request(r)
 }
 
 func (c *Client) signature(params string) string {
@@ -71,4 +67,18 @@ func (c *Client) formValues(obj interface{}) (url.Values, error) {
 	formData.Add("json", params)
 
 	return formData, nil
+}
+
+func (c *Client) request(r *http.Request) error {
+	client := c.HTTPClient
+	if client == nil {
+		client = &http.Client{}
+	}
+
+	resp, err := client.Do(r)
+	if resp.StatusCode != 200 {
+		err = fmt.Errorf(resp.Status)
+	}
+
+	return err
 }
