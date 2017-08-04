@@ -13,9 +13,7 @@ func NewSingle(client *sailthru_client.Client) *Single {
 	return &Single{client: client}
 }
 
-func (s *Single) Deliver(email, template string) error {
-	var obj interface{}
-
+func (s *Single) Deliver(email string, template string, vars map[string]string) error {
 	p := params{
 		Template: template,
 		Email:    email,
@@ -35,19 +33,13 @@ func (s *Single) Deliver(email, template string) error {
 	}
 
 	if s.Params.StartTime == "" && s.Params.EndTime == "" {
-		obj = scheduleTime{
-			params:       p,
-			ScheduleTime: s.Params.ScheduleTime,
-		}
+		p.ScheduleTime = s.Params.ScheduleTime
 	} else {
-		obj = scheduleWindow{
-			params: p,
-			ScheduleWindow: ScheduleWindow{
-				StartTime: s.Params.StartTime,
-				EndTime:   s.Params.EndTime,
-			},
+		p.ScheduleTime = ScheduleWindow{
+			StartTime: s.Params.StartTime,
+			EndTime:   s.Params.EndTime,
 		}
 	}
 
-	return s.client.Post(Endpoint, obj)
+	return s.client.Post(Endpoint, p)
 }
