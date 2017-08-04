@@ -3,9 +3,11 @@ package sailthru_client
 import (
 	"bytes"
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -23,10 +25,10 @@ func NewClient(key, secret string) *Client {
 	return &Client{key: key, secret: secret}
 }
 
-func (c *Client) Post(endpoint string, params []byte) error {
+func (c *Client) Post(endpoint string, obj interface{}) error {
 	client := &http.Client{}
 
-	values, err := c.formValues(params)
+	values, err := c.formValues(obj)
 	if err != nil {
 		return err
 	}
@@ -35,34 +37,38 @@ func (c *Client) Post(endpoint string, params []byte) error {
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.Header.Add("Content-Length", strconv.Itoa(len(values.Encode())))
 
-	_, err = client.Do(r)
+	resp, err := client.Do(r)
+	fmt.Println(resp)
 
 	return err
 }
 
-func (c *Client) signature(params []byte) (string, error) {
-	sigElements := []string{
-		c.secret,
+func (c *Client) signature(params string) string {
+	values := []string{
 		c.key,
 		"json",
-		string(params),
+		params,
 	}
+	sort.Strings(values)
+	values = append([]string{c.secret}, values...)
 
-	sig := fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(sigElements, ""))))
-	return sig, nil
+	signature := fmt.Sprintf("%x", md5.Sum([]byte(strings.Join(values, ""))))
+	return signature
 }
 
-func (c *Client) formValues(params []byte) (url.Values, error) {
-	signature, err := c.signature(params)
+func (c *Client) formValues(obj interface{}) (url.Values, error) {
+	dd, err := json.Marshal(obj)
 	if err != nil {
 		return url.Values{}, err
 	}
 
+	params := string(dd)
+
 	formData := url.Values{}
 	formData.Set("api_key", c.key)
-	formData.Add("sig", signature)
+	formData.Add("sig", c.signature(params))
 	formData.Add("format", "json")
-	formData.Add("json", string(params))
+	formData.Add("json", params)
 
 	return formData, nil
 }

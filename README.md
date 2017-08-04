@@ -13,6 +13,7 @@ client := sailthru_client.NewClient(key, secret)
 
 updater := sailthru_job.NewUpdate(client)
 updater.Params.PostbackURL = "http://example.org/webhooks"
+updater.Params.ReportEmail = 'me@example.org'
 updater.Params.IncludeSignupDate = true
 
 updater.ProcessURL("https://some-bucket.s3.amazonaws.com/path/to/file1.csv")

@@ -1,8 +1,6 @@
 package sailthru_job
 
 import (
-	"encoding/json"
-
 	"github.com/dailyburn/sailthru-go/client"
 )
 
@@ -16,15 +14,13 @@ func NewUpdate(client *sailthru_client.Client) *Update {
 }
 
 func (u *Update) ProcessURL(dataURL string) error {
-	dd, err := json.Marshal(params{
+	p := params{
 		Job:               JobUpdate,
 		URL:               dataURL,
 		PostbackURL:       u.Params.PostbackURL,
+		ReportEmail:       u.Params.ReportEmail,
 		IncludeSignupDate: u.Params.IncludeSignupDate,
-	})
-	if err != nil {
-		return err
 	}
 
-	return u.client.Post(Endpoint, dd)
+	return u.client.Post(Endpoint, p)
 }
