@@ -1,4 +1,4 @@
-package sailthru_job
+package job
 
 const (
 	Endpoint  = "job"

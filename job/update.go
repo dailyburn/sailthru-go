@@ -1,4 +1,4 @@
-package sailthru_job
+package job
 
 import (
 	"github.com/dailyburn/sailthru-go/client"

@@ -1,4 +1,4 @@
-package sailthru_send
+package send
 
 const (
 	Endpoint = "send"

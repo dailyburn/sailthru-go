@@ -12,7 +12,7 @@ Note: If either `StartTime` or `EndTime` is set, then `ScheduleTime` is ignored 
 ```go
 client := client.NewClient(key, secret)
 
-send := sailthru_send.NewSingle(client)
+send := send.NewSingle(client)
 
 // send.Params.CC = "me@example.org"
 // send.Params.BCC = "me2@example.org"
@@ -36,7 +36,7 @@ send.Deliver("you@example.org", "A-Template", vars)
 ```go
 client := client.NewClient(key, secret)
 
-updater := sailthru_job.NewUpdate(client)
+updater := job.NewUpdate(client)
 updater.Params.PostbackURL = "http://example.org/webhooks"
 updater.Params.ReportEmail = 'me@example.org'
 updater.Params.IncludeSignupDate = true

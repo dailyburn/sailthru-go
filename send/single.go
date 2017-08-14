@@ -1,4 +1,4 @@
-package sailthru_send
+package send
 
 import (
 	"github.com/dailyburn/sailthru-go/client"
