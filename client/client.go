@@ -23,7 +23,11 @@ type Client struct {
 }
 
 func NewClient(key, secret string) *Client {
-	return &Client{key: key, secret: secret}
+	return &Client{
+		key:        key,
+		secret:     secret,
+		HTTPClient: &http.Client{},
+	}
 }
 
 func (c *Client) Post(endpoint string, obj interface{}) error {
@@ -70,12 +74,7 @@ func (c *Client) formValues(obj interface{}) (url.Values, error) {
 }
 
 func (c *Client) request(r *http.Request) error {
-	client := c.HTTPClient
-	if client == nil {
-		client = &http.Client{}
-	}
-
-	resp, err := client.Do(r)
+	resp, err := c.HTTPClient.Do(r)
 	if resp.StatusCode != 200 {
 		err = fmt.Errorf(resp.Status)
 	}
