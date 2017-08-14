@@ -5,11 +5,11 @@ import (
 )
 
 type Update struct {
-	client *sailthru_client.Client
+	client *client.Client
 	Params Params
 }
 
-func NewUpdate(client *sailthru_client.Client) *Update {
+func NewUpdate(client *client.Client) *Update {
 	return &Update{client: client}
 }
 

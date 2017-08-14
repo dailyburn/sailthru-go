@@ -1,4 +1,4 @@
-package sailthru_client_test
+package client_test
 
 import (
 	"net/http"
@@ -8,13 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func mockClient(url string) *sailthru_client.Client {
-	sailthru_client.BaseURL = url
-	return &sailthru_client.Client{HTTPClient: http.DefaultClient}
+func mockClient(url string) *client.Client {
+	client.BaseURL = url
+	return &client.Client{HTTPClient: http.DefaultClient}
 }
 
 // Unit Tests
 
 func TestClientDefaultHost(t *testing.T) {
-	assert.Equal(t, "https://api.sailthru.com", sailthru_client.BaseURL)
+	assert.Equal(t, "https://api.sailthru.com", client.BaseURL)
 }

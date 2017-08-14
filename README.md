@@ -10,7 +10,7 @@ An unauthorized, and not guaranteed to work for you, implementation of the [Sail
 Note: If either `StartTime` or `EndTime` is set, then `ScheduleTime` is ignored (even if also set).
 
 ```go
-client := sailthru_client.NewClient(key, secret)
+client := client.NewClient(key, secret)
 
 send := sailthru_send.NewSingle(client)
 
@@ -34,7 +34,7 @@ send.Deliver("you@example.org", "A-Template", vars)
 [Update](https://getstarted.sailthru.com/developers/api/job/#update)
 
 ```go
-client := sailthru_client.NewClient(key, secret)
+client := client.NewClient(key, secret)
 
 updater := sailthru_job.NewUpdate(client)
 updater.Params.PostbackURL = "http://example.org/webhooks"

@@ -5,11 +5,11 @@ import (
 )
 
 type Single struct {
-	client *sailthru_client.Client
+	client *client.Client
 	Params Params
 }
 
-func NewSingle(client *sailthru_client.Client) *Single {
+func NewSingle(client *client.Client) *Single {
 	return &Single{client: client}
 }
 

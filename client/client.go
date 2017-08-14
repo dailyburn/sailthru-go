@@ -1,4 +1,4 @@
-package sailthru_client
+package client
 
 import (
 	"bytes"
