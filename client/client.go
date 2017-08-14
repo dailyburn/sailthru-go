@@ -12,8 +12,8 @@ import (
 	"strings"
 )
 
-const (
-	baseURL = "https://api.sailthru.com"
+var (
+	BaseURL = "https://api.sailthru.com"
 )
 
 type Client struct {
@@ -32,7 +32,7 @@ func (c *Client) Post(endpoint string, obj interface{}) error {
 		return err
 	}
 
-	r, _ := http.NewRequest("POST", fmt.Sprintf("%v/%v", baseURL, endpoint), bytes.NewBufferString(values.Encode()))
+	r, _ := http.NewRequest("POST", fmt.Sprintf("%v/%v", BaseURL, endpoint), bytes.NewBufferString(values.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	r.Header.Add("Content-Length", strconv.Itoa(len(values.Encode())))
 
