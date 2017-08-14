@@ -42,6 +42,15 @@ func TestPost(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func Test500InternalServerError(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer server.Close()
+	err := mockClient(server.URL).Post("", "")
+	assert.EqualError(t, err, "500 Internal Server Error")
+}
+
 func TestInvalidJSONPayload(t *testing.T) {
 	payload := make(chan int)
 	err := mockClient("").Post("", payload)
