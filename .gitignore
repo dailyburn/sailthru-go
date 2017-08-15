@@ -6,3 +6,4 @@
 *.yml
 tmp/*
 _temp
+*.csv
