@@ -29,7 +29,7 @@ func TestDefaultHeaders(t *testing.T) {
 		assert.Equal(t, "72", r.Header.Get("Content-Length"))
 	}))
 	defer server.Close()
-	err := mockClient(server.URL).Post("", "")
+	_, err := mockClient(server.URL).Post("", "")
 	assert.NoError(t, err)
 }
 
@@ -38,7 +38,7 @@ func TestPost(t *testing.T) {
 		assert.Equal(t, "POST", r.Method)
 	}))
 	defer server.Close()
-	err := mockClient(server.URL).Post("", "")
+	_, err := mockClient(server.URL).Post("", "")
 	assert.NoError(t, err)
 }
 
@@ -47,12 +47,12 @@ func Test500InternalServerError(t *testing.T) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}))
 	defer server.Close()
-	err := mockClient(server.URL).Post("", "")
+	_, err := mockClient(server.URL).Post("", "")
 	assert.EqualError(t, err, "500 Internal Server Error")
 }
 
 func TestInvalidJSONPayload(t *testing.T) {
 	payload := make(chan int)
-	err := mockClient("").Post("", payload)
+	_, err := mockClient("").Post("", payload)
 	assert.Error(t, err)
 }

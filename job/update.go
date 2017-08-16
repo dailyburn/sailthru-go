@@ -13,7 +13,7 @@ func NewUpdate(client *client.Client) *Update {
 	return &Update{client: client}
 }
 
-func (u *Update) ProcessURL(dataURL string) error {
+func (u *Update) ProcessURL(dataURL string) (client.Response, error) {
 	p := params{
 		Job:               JobUpdate,
 		URL:               dataURL,

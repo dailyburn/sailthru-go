@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"sort"
@@ -30,10 +31,10 @@ func NewClient(key, secret string) *Client {
 	}
 }
 
-func (c *Client) Post(endpoint string, obj interface{}) error {
+func (c *Client) Post(endpoint string, obj interface{}) (Response, error) {
 	values, err := c.formValues(obj)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	r, _ := http.NewRequest("POST", fmt.Sprintf("%v/%v", BaseURL, endpoint), bytes.NewBufferString(values.Encode()))
@@ -73,11 +74,25 @@ func (c *Client) formValues(obj interface{}) (url.Values, error) {
 	return formData, nil
 }
 
-func (c *Client) request(r *http.Request) error {
-	resp, err := c.HTTPClient.Do(r)
-	if resp.StatusCode != 200 {
-		err = fmt.Errorf(resp.Status)
+func (c *Client) request(r *http.Request) (Response, error) {
+	httpRes, err := c.HTTPClient.Do(r)
+
+	if err != nil {
+		return nil, err
 	}
 
-	return err
+	defer httpRes.Body.Close()
+
+	if httpRes.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(httpRes.Status)
+	}
+
+	decoder := json.NewDecoder(httpRes.Body)
+
+	response := &JSONResponse{}
+	if err := decoder.Decode(&response); err != nil && err != io.EOF {
+		return nil, err
+	}
+
+	return response, nil
 }

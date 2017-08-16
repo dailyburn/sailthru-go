@@ -23,11 +23,11 @@ func main() {
 	updater.Params.ReportEmail = *email
 	updater.Params.IncludeSignupDate = true
 
-	err := updater.ProcessURL(*url)
+	res, err := updater.ProcessURL(*url)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln("error:", err)
 	}
 
-	log.Print("processing")
+	log.Println("job_id:", res.GetResponse()["job_id"])
 }

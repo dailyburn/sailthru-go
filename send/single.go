@@ -13,7 +13,7 @@ func NewSingle(client *client.Client) *Single {
 	return &Single{client: client}
 }
 
-func (s *Single) Deliver(email string, template string, vars map[string]string) error {
+func (s *Single) Deliver(email string, template string, vars map[string]string) (client.Response, error) {
 	p := params{
 		Template: template,
 		Email:    email,

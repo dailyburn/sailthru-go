@@ -19,11 +19,11 @@ func main() {
 	send := send.NewSingle(client)
 	vars := map[string]string{}
 
-	err := send.Deliver(*email, *template, vars)
+	res, err := send.Deliver(*email, *template, vars)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln("error:", err)
 	}
 
-	log.Print("sent")
+	log.Println("send_id:", res.GetResponse()["send_id"])
 }
