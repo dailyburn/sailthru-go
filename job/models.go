@@ -3,11 +3,11 @@ package sailthru_job
 const (
 	Endpoint  = "job"
 	JobUpdate = "update"
+	JobImport = "import"
 )
 
-// Ensure that the params hash is ordered alphabetically so that
-// the signature creation process "just works"
 type params struct {
+	List              string `json:"list,omitempty"`
 	Job               string `json:"job"`
 	PostbackURL       string `json:"postback_url,omitempty"`
 	ReportEmail       string `json:"report_email,omitempty"`

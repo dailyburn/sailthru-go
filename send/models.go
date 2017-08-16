@@ -36,7 +36,6 @@ type Params struct {
 	ScheduleTime string
 	StartTime    string
 	EndTime      string
-	Vars         map[string]string
 	CC           string
 	BCC          string
 	ReplyTo      string
