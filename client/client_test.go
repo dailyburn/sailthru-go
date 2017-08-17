@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/dailyburn/sailthru-go/client"
 	"github.com/stretchr/testify/assert"
@@ -17,8 +18,11 @@ func mockClient(url string) *client.Client {
 
 // Unit Tests
 
-func TestClientDefaultHost(t *testing.T) {
+func TestDefaultVars(t *testing.T) {
 	assert.Equal(t, "https://api.sailthru.com", client.BaseURL)
+	assert.Equal(t, 120*time.Second, client.HTTPClientTimeout)
+	assert.Equal(t, 10*time.Second, client.HTTPDialerTimeout)
+	assert.Equal(t, 10*time.Second, client.HTTPTLSHandshakeTimeout)
 }
 
 // Functional Tests

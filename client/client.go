@@ -6,16 +6,28 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
-	BaseURL = "https://api.sailthru.com"
+	BaseURL                 = "https://api.sailthru.com"
+	HTTPClientTimeout       = 120 * time.Second
+	HTTPDialerTimeout       = 10 * time.Second
+	HTTPTLSHandshakeTimeout = 10 * time.Second
 )
+
+var transport = &http.Transport{
+	Dial: (&net.Dialer{
+		Timeout: HTTPDialerTimeout,
+	}).Dial,
+	TLSHandshakeTimeout: HTTPTLSHandshakeTimeout,
+}
 
 type Client struct {
 	key        string
@@ -25,9 +37,12 @@ type Client struct {
 
 func NewClient(key, secret string) *Client {
 	return &Client{
-		key:        key,
-		secret:     secret,
-		HTTPClient: &http.Client{},
+		key:    key,
+		secret: secret,
+		HTTPClient: &http.Client{
+			Timeout:   HTTPClientTimeout,
+			Transport: transport,
+		},
 	}
 }
 
