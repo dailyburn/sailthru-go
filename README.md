@@ -5,42 +5,43 @@ An unauthorized, and not guaranteed to work for you, implementation of the [Sail
 ## Examples
 
 ### Send
-[Template](https://getstarted.sailthru.com/developers/api/send/#POST_to_Send_Schedule_or_Update)
-
-Note: If either `StartTime` or `EndTime` is set, then `ScheduleTime` is ignored (even if also set).
+Sailthru [Template](https://getstarted.sailthru.com/developers/api/send/#POST_to_Send_Schedule_or_Update) docs
 
 ```go
-client := client.NewClient(key, secret)
-
-send := send.NewSingle(client)
-
-// send.Params.CC = "me@example.org"
-// send.Params.BCC = "me2@example.org"
-// send.Params.ReplyTo = "reply-to@example.org"
-// send.Params.Test = true
-// send.Params.DataFeedURL = "https://some-bucket.s3.amazonaws.com/path/to/feed"
-// send.Params.BehalfOf = "admin@example.rog"
-// send.Params.ScheduleTime = "2006-01-02 15:04:05 UTC"
-// send.Params.StartTime = "2006-01-02 15:04:05 UTC"
-// send.Params.EndTime =  = "2006-01-02 15:04:05 UTC"
+client := sailthru.NewClient(key, secret)
 
 vars := map[string]string{"name": "Bob", "welcome": "Hello!"}
-send.Deliver("you@example.org", "A-Template", vars)
+
+params := &params.Send{
+  Email:    "you@example.org",
+  Template: "A-Template",
+  Vars:     vars,
+}
+
+res, err := client.Send(params)
 ```
 
-
-### Job
-
-[Update](https://getstarted.sailthru.com/developers/api/job/#update)
+You can also set a schedule time;
 
 ```go
-client := client.NewClient(key, secret)
+params.ScheduleTime = &ScheduleTime{
+  StartTime: "Tue, 27 Jul 2010 12:10:00 -0400",
+  EndTime: "Tue, 28 Jul 2010 12:10:00 -0400", //Optional
+}
+```
 
-updater := job.NewUpdate(client)
-updater.Params.PostbackURL = "http://example.org/webhooks"
-updater.Params.ReportEmail = 'me@example.org'
-updater.Params.IncludeSignupDate = true
+### Job
+Sailthru [Update Job](https://getstarted.sailthru.com/developers/api/job/#update) docs
 
-updater.ProcessURL("https://some-bucket.s3.amazonaws.com/path/to/file1.csv")
-updater.ProcessURL("https://some-bucket.s3.amazonaws.com/path/to/file2.csv")
+```go
+client := sailthru.NewClient(key, secret)
+
+params := &params.UpdateJob{
+  PostbackURL:       "http://example.org/webhooks",
+  ReportEmail:       "you@example.org",
+  IncludeSignupDate: true,
+  URL:               "https://some-bucket.s3.amazonaws.com/path/to/file1.json",
+}
+
+res, err := client.PostJob(params)
 ```

@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/dailyburn/sailthru-go/client"
-	"github.com/dailyburn/sailthru-go/send"
+	sailthru "github.com/dailyburn/sailthru-go"
+	"github.com/dailyburn/sailthru-go/params"
 )
 
 func main() {
@@ -15,11 +15,14 @@ func main() {
 	email := flag.String("email", "", "Email Address (Required)")
 	flag.Parse()
 
-	client := client.NewClient(*key, *secret)
-	send := send.NewSingle(client)
-	vars := map[string]string{}
+	client := sailthru.NewClient(*key, *secret)
 
-	res, err := send.Deliver(*email, *template, vars)
+	params := &params.Send{
+		Email:    *email,
+		Template: *template,
+	}
+
+	res, err := client.Send(params)
 
 	if err != nil {
 		log.Fatalln("error:", err)

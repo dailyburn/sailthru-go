@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/dailyburn/sailthru-go/client"
-	"github.com/dailyburn/sailthru-go/job"
+	sailthru "github.com/dailyburn/sailthru-go"
+	"github.com/dailyburn/sailthru-go/params"
 )
 
 func main() {
@@ -16,14 +16,16 @@ func main() {
 	email := flag.String("email", "", "Email Address (Required)")
 	flag.Parse()
 
-	client := client.NewClient(*key, *secret)
+	client := sailthru.NewClient(*key, *secret)
 
-	updater := job.NewUpdate(client)
-	updater.Params.PostbackURL = *postback
-	updater.Params.ReportEmail = *email
-	updater.Params.IncludeSignupDate = true
+	params := &params.UpdateJob{
+		PostbackURL:       *postback,
+		ReportEmail:       *email,
+		IncludeSignupDate: true,
+		URL:               *url,
+	}
 
-	res, err := updater.ProcessURL(*url)
+	res, err := client.PostJob(params)
 
 	if err != nil {
 		log.Fatalln("error:", err)
