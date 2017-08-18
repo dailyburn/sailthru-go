@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -46,16 +45,37 @@ func NewClient(key, secret string) *Client {
 	}
 }
 
+func (c *Client) Get(endpoint string, obj interface{}) (Response, error) {
+	values, err := c.formValues(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%v/%v?%v", BaseURL, endpoint, values.Encode())
+	r, _ := http.NewRequest("GET", url, nil)
+	return c.request(r)
+}
+
 func (c *Client) Post(endpoint string, obj interface{}) (Response, error) {
 	values, err := c.formValues(obj)
 	if err != nil {
 		return nil, err
 	}
 
-	r, _ := http.NewRequest("POST", fmt.Sprintf("%v/%v", BaseURL, endpoint), bytes.NewBufferString(values.Encode()))
+	url := fmt.Sprintf("%v/%v", BaseURL, endpoint)
+	r, _ := http.NewRequest("POST", url, bytes.NewBufferString(values.Encode()))
 	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	r.Header.Add("Content-Length", strconv.Itoa(len(values.Encode())))
+	return c.request(r)
+}
 
+func (c *Client) Delete(endpoint string, obj interface{}) (Response, error) {
+	values, err := c.formValues(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%v/%v?%v", BaseURL, endpoint, values.Encode())
+	r, _ := http.NewRequest("DELETE", url, nil)
 	return c.request(r)
 }
 
