@@ -43,5 +43,5 @@ params := &params.UpdateJob{
   URL:               "https://some-bucket.s3.amazonaws.com/path/to/file1.json",
 }
 
-res, err := client.PostJob(params)
+res, err := client.ProcessUpdateJob(params)
 ```

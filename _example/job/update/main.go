@@ -25,7 +25,7 @@ func main() {
 		URL:               *url,
 	}
 
-	res, err := client.PostJob(params)
+	res, err := client.ProcessUpdateJob(params)
 
 	if err != nil {
 		log.Fatalln("error:", err)

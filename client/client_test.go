@@ -46,6 +46,24 @@ func TestPost(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestGet(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "GET", r.Method)
+	}))
+	defer server.Close()
+	_, err := mockClient(server.URL).Get("", "")
+	assert.NoError(t, err)
+}
+
+func TestDelete(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "DELETE", r.Method)
+	}))
+	defer server.Close()
+	_, err := mockClient(server.URL).Delete("", "")
+	assert.NoError(t, err)
+}
+
 func Test500InternalServerError(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
