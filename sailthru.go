@@ -39,6 +39,12 @@ func (s *Client) CancelSend(sendID string) (client.Response, error) {
 	return s.c.Delete("send", params)
 }
 
+// ProcessImportJob performs an import from a given CSV containing one email per line
+func (s *Client) ProcessImportJob(job *params.ImportJob) (client.Response, error) {
+	job.Job = "import"
+	return s.c.Post(job.GetEndpoint(), job)
+}
+
 // ProcessUpdateJob performs a bulk update of any number of user profiles
 func (s *Client) ProcessUpdateJob(job *params.UpdateJob) (client.Response, error) {
 	job.Job = "update"
