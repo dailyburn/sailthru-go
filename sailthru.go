@@ -58,3 +58,11 @@ func (s *Client) GetJobStatus(jobID string) (client.Response, error) {
 	}
 	return s.c.Get("job", params)
 }
+
+func (s *Client) GetUser(user *params.User) (client.Response, error) {
+	return s.c.Get("user", user)
+}
+
+func (s *Client) SaveUser(user *params.SaveUser) (client.Response, error) {
+	return s.c.Post("user", user)
+}
