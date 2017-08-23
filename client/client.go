@@ -1,20 +1,32 @@
-package sailthru_client
+package client
 
 import (
 	"bytes"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"sort"
-	"strconv"
 	"strings"
+	"time"
 )
 
-const (
-	baseURL = "https://api.sailthru.com"
+var (
+	BaseURL                 = "https://api.sailthru.com"
+	HTTPClientTimeout       = 120 * time.Second
+	HTTPDialerTimeout       = 10 * time.Second
+	HTTPTLSHandshakeTimeout = 10 * time.Second
 )
+
+var transport = &http.Transport{
+	Dial: (&net.Dialer{
+		Timeout: HTTPDialerTimeout,
+	}).Dial,
+	TLSHandshakeTimeout: HTTPTLSHandshakeTimeout,
+}
 
 type Client struct {
 	key        string
@@ -23,19 +35,47 @@ type Client struct {
 }
 
 func NewClient(key, secret string) *Client {
-	return &Client{key: key, secret: secret}
+	return &Client{
+		key:    key,
+		secret: secret,
+		HTTPClient: &http.Client{
+			Timeout:   HTTPClientTimeout,
+			Transport: transport,
+		},
+	}
 }
 
-func (c *Client) Post(endpoint string, obj interface{}) error {
+func (c *Client) Get(endpoint string, obj interface{}) (Response, error) {
 	values, err := c.formValues(obj)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	r, _ := http.NewRequest("POST", fmt.Sprintf("%v/%v", baseURL, endpoint), bytes.NewBufferString(values.Encode()))
-	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	r.Header.Add("Content-Length", strconv.Itoa(len(values.Encode())))
+	url := fmt.Sprintf("%v/%v?%v", BaseURL, endpoint, values.Encode())
+	r, _ := http.NewRequest("GET", url, nil)
+	return c.request(r)
+}
 
+func (c *Client) Post(endpoint string, obj interface{}) (Response, error) {
+	values, err := c.formValues(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%v/%v", BaseURL, endpoint)
+	r, _ := http.NewRequest("POST", url, bytes.NewBufferString(values.Encode()))
+	r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	return c.request(r)
+}
+
+func (c *Client) Delete(endpoint string, obj interface{}) (Response, error) {
+	values, err := c.formValues(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("%v/%v?%v", BaseURL, endpoint, values.Encode())
+	r, _ := http.NewRequest("DELETE", url, nil)
 	return c.request(r)
 }
 
@@ -69,16 +109,25 @@ func (c *Client) formValues(obj interface{}) (url.Values, error) {
 	return formData, nil
 }
 
-func (c *Client) request(r *http.Request) error {
-	client := c.HTTPClient
-	if client == nil {
-		client = &http.Client{}
+func (c *Client) request(r *http.Request) (Response, error) {
+	httpRes, err := c.HTTPClient.Do(r)
+
+	if err != nil {
+		return nil, err
 	}
 
-	resp, err := client.Do(r)
-	if resp.StatusCode != 200 {
-		err = fmt.Errorf(resp.Status)
+	defer httpRes.Body.Close()
+
+	if httpRes.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf(httpRes.Status)
 	}
 
-	return err
+	decoder := json.NewDecoder(httpRes.Body)
+
+	response := &JSONResponse{}
+	if err := decoder.Decode(&response); err != nil && err != io.EOF {
+		return nil, err
+	}
+
+	return response, nil
 }
