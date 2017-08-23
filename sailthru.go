@@ -59,10 +59,12 @@ func (s *Client) GetJobStatus(jobID string) (client.Response, error) {
 	return s.c.Get("job", params)
 }
 
+// GetUser gets the requested user object from Sailthru
 func (s *Client) GetUser(user *params.User) (client.Response, error) {
 	return s.c.Get("user", user)
 }
 
+// SaveUser performs an upsert of a single User object
 func (s *Client) SaveUser(user *params.SaveUser) (client.Response, error) {
 	return s.c.Post("user", user)
 }
