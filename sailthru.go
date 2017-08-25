@@ -68,3 +68,8 @@ func (s *Client) GetUser(user *params.User) (client.Response, error) {
 func (s *Client) SaveUser(user *params.SaveUser) (client.Response, error) {
 	return s.c.Post("user", user)
 }
+
+// PostEvent sends event data
+func (s *Client) PostEvent(event *params.Event) (client.Response, error) {
+	return s.c.Post("event", event)
+}
