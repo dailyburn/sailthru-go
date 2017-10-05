@@ -3,11 +3,11 @@ package params
 import "encoding/json"
 
 type Send struct {
-	Template     string            `json:"template"`
-	Email        string            `json:"email"`
-	Vars         map[string]string `json:"vars,omitempty"`
-	Options      Options           `json:"options,omitempty"`
-	ScheduleTime ScheduleTime      `json:"schedule_time,omitempty"`
+	Template     string                 `json:"template"`
+	Email        string                 `json:"email"`
+	Vars         map[string]interface{} `json:"vars,omitempty"`
+	Options      Options                `json:"options,omitempty"`
+	ScheduleTime ScheduleTime           `json:"schedule_time,omitempty"`
 }
 
 func (s *Send) GetEndpoint() string {

@@ -8,13 +8,13 @@ type User struct {
 
 type SaveUser struct {
 	User
-	Keys            map[string]string `json:"keys,omitempty"`
-	KeysConflict    string            `json:"keysconflict,omitempty"`
-	Cookies         map[string]string `json:"cookies,omitempty"`
-	Lists           map[string]int    `json:"lists,omitempty"`
-	OptoutEmail     string            `json:"optout_email,omitempty"`
-	OptoutTemplates map[string]int    `json:"optout_templates,omitempty"`
-	Vars            map[string]string `json:"vars,omitempty"`
+	Keys            map[string]string      `json:"keys,omitempty"`
+	KeysConflict    string                 `json:"keysconflict,omitempty"`
+	Cookies         map[string]string      `json:"cookies,omitempty"`
+	Lists           map[string]int         `json:"lists,omitempty"`
+	OptoutEmail     string                 `json:"optout_email,omitempty"`
+	OptoutTemplates map[string]int         `json:"optout_templates,omitempty"`
+	Vars            map[string]interface{} `json:"vars,omitempty"`
 }
 
 func (u *User) GetEndpoint() string {
